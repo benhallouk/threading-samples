@@ -21,7 +21,10 @@ namespace ThreadingSamples
             // Uncomment to see a quueing system using lock and Monitor Wait and PulseAll
             //LockExampleRunner.Run();
 
-            DeadLockExampleRunner.Run();
+            // uncomment to see how deadlock happen
+            //DeadLockExampleRunner.Run();
+
+            DeadLockSolutionRunner.Run();
 
             Console.WriteLine("Main ends");
         }

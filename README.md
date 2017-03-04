@@ -393,3 +393,31 @@ Console.WriteLine("lockExample2 {0}", lockExample2.GetNumber()););
 ```
 
 by running the code couple of times you may see 1 or 2 threads survivde the deadlock
+
+### Deadlock solution
+
+One of the classcial solution is to use a stable order of which the locks take place, for example always the thread dealing with object that has smaller id would run first that way the threads are not colliding with each other, and an implementation of that may look like below
+
+```csharp
+public void Compute(DeadLockSolution deadLockSolution)
+{
+    var firstLock = _lockObject;
+    var secondLock = deadLockSolution._lockObject;
+
+    if (Id > deadLockSolution.Id)
+    {
+        firstLock = deadLockSolution._lockObject;
+        secondLock = _lockObject;
+    }
+        
+    lock (firstLock)
+    {
+        Thread.Sleep(1);
+        lock (secondLock)
+        {
+            Console.WriteLine("Thread number started {0}", Thread.CurrentThread.ManagedThreadId);
+            _number = deadLockSolution.GetNumber();
+        }
+    }
+}
+```
