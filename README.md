@@ -159,5 +159,43 @@ Thread number started 10
 Main thread ends
 ```
 
-**Note** that because os Sleep that semulate computing work the threads never get a chance to complete the computation
+**Note** that because os Sleep that simulate computing work the threads never get a chance to complete the computation in this example, if you would run it couple of times you may see some thread may get change to complete before the main thread get terminated
 
+### Thread shutdown cordination example
+
+Sometimes is needed that you will want to cordinate the thread shutdown which mean controlling when a thread needs to be shutdown, in this example you will learn how to do that
+
+In order to do that you will need a simple flag that is safe to share between threads we use boolean with the c# keyword `volatile` 
+
+```csharp
+public volatile static bool Cancel = false;
+```
+
+The compute action would use then this flag in a while loop as shown below
+
+```csharp
+public void Compute()
+{
+    while (!ThreadShutdownCordinationExampleRunner.Cancel)
+    {
+        Console.WriteLine("Computting...");
+        Thread.Sleep(2000);                
+    }
+}
+```
+
+When the thread is started the volatile flag cancel is set to false, and when its set to cancel we join the thread and wait for it to be shutdown
+
+```csharp
+Thread thread = new Thread(threadExample.Compute);
+thread.Start();
+
+//simulating some work on the main thread
+Thread.Sleep(1000);
+
+//set the volatile flag cancel to true, which will exit the computing loop
+Cancel = true;
+
+// join will block the current thread and wait until the thread is shutdown
+thread.Join();
+```
