@@ -141,3 +141,23 @@ Description description
 
 - The order is unpredictable since the CLR thread scheduler decide when to each thread and when to pause it
 - The main thread ends before the other threads get acomplished
+
+### Thread life time example
+
+Thread has by default long life time which means can run even when the main thread is terminated as shown in the example above. But when the property IsBackground set to true `thread.IsBackground = true;` thread can be terminated as it is considered not important so the sample example would print this output
+
+```
+Main thread started
+Thread number started 3
+Thread number started 4
+Thread number started 5
+Thread number started 6
+Thread number started 7
+Thread number started 8
+Thread number started 9
+Thread number started 10
+Main thread ends
+```
+
+**Note** that because os Sleep that semulate computing work the threads never get a chance to complete the computation
+
