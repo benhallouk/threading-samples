@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeadLockExample\DeadLockExample.cs" />
+    <Compile Include="DeadLockExample\DeadLockExampleRunner.cs" />
     <Compile Include="LockExample\LockExample.cs" />
     <Compile Include="LockExample\LockExampleRunner.cs" />
     <Compile Include="ThreadExample\ThreadExample.cs" />

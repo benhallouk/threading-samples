@@ -328,3 +328,68 @@ for (int i = 0; i < 10; i++)
 }
 ```
 
+### Deadock example
+
+When 2 threads lock each other will remain in locked state forever this is known as deadlock, the code bellow simulate a deadlock situation  
+
+Cosider the class bellow, we have lockObject that is used to lock any thread who tries to change the number field, and since the compute method uses as parameter same type and operate on its number field it must have 2 locks one for the current instance and the other for the instance passes as parameter
+
+```csharp
+public class DeadLockExample
+{
+    private int _number;
+    public object _lockObject = new object();
+
+    public DeadLockExample(int number)
+    {
+        _number = number;
+    }
+
+
+    public int GetNumber()
+    {
+        return _number;
+    }
+
+    public void Compute(DeadLockExample deadLockExample)
+    {
+        lock (_lockObject)
+        {
+            Thread.Sleep(1);
+            lock (deadLockExample._lockObject)
+            {
+                Console.WriteLine("Thread number started {0}", Thread.CurrentThread.ManagedThreadId);
+                _number = deadLockExample.GetNumber();
+            }
+        }
+    }
+
+}
+```
+
+This situation produces a deadlock when running 2 paralelel threads as bellow
+
+```csharp
+var lockExample1 = new DeadLockExample(1);
+var lockExample2 = new DeadLockExample(2);
+
+for (int i = 0; i < 100; i++)
+{            
+    Thread thread = new Thread(()=> {
+        if (i % 2 == 0)
+        {
+            lockExample1.Compute(lockExample2);
+        }
+        else
+        {
+            lockExample2.Compute(lockExample1);
+        }     
+    });
+    thread.Start();
+}
+
+Console.WriteLine("lockExample1 {0}", lockExample1.GetNumber());
+Console.WriteLine("lockExample2 {0}", lockExample2.GetNumber()););
+```
+
+by running the code couple of times you may see 1 or 2 threads survivde the deadlock

@@ -18,7 +18,10 @@ namespace ThreadingSamples
             // Uncomment to see how a shutdown cordination would work 
             //ThreadShutdownCordinationExampleRunner.Run();
 
-            LockExampleRunner.Run();
+            // Uncomment to see a quueing system using lock and Monitor Wait and PulseAll
+            //LockExampleRunner.Run();
+
+            DeadLockExampleRunner.Run();
 
             Console.WriteLine("Main ends");
         }
