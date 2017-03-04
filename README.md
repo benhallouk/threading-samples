@@ -199,3 +199,132 @@ Cancel = true;
 // join will block the current thread and wait until the thread is shutdown
 thread.Join();
 ```
+
+### Lock example
+
+In multi-threading enviroment it is possible to have 2 threads accessing the same resource at the same time, and this is the bug factory in multithreading and it is one of the caviates we highlite above, consider this example:
+
+Consider the following class 
+
+```csharp
+public class ThreadExample
+{
+    private int _number = 1;
+
+    public void Compute()
+    {
+        Thread.Sleep(10);
+        _number++;             
+    }
+
+    public void ShowNumber()
+    {
+        Console.WriteLine("The final value of number is {0}",_number);
+    }
+}
+```
+
+The code bellow run 10 threads that does a comuptation by calling compute method which increment the number by one on each thread
+
+```csharp
+var threadExample = new ThreadExample();
+for (int i = 1; i < 11; i++)
+{
+    Thread thread = new Thread(threadExample.Compute);
+    thread.Start();
+}
+threadExample.ShowNumber();
+```
+
+So we would expect the instructions above to print 10 however in this case show number will print unpredictable value and here is the reason way:
+
+Each thread before incrementing the number it will read the current value which may have been changed before its inremented so running this code will produce diffrent results each time.
+
+To fix that we would use `lock` keyword over an object which then ensure that the number is locked for other threads and after it get incremented it will be released to be used by other threads, the code then would look like that
+
+```csharp
+public class ThreadExample
+{
+    //lock object
+    private object _lockObject = new object();
+    private int _number = 1;
+
+    public void Compute()
+    {
+        Thread.Sleep(10);
+        //use the lock keyword before incrementing the number
+        lock(_lockObject)
+        {
+            _number++;
+        }     
+    }
+
+    public void ShowNumber()
+    {
+        Console.WriteLine("The final value of number is {0}",_number);
+    }
+}
+```
+
+Here is a complete example of queing system that uses `lock` note that in the ComputeDequeing method we are using `Monitor.Wait(_objectTray);` which keep waiting for a change on the _objectTray in sleep mode, while ComputeEnqueing uses `Monitor.PulseAll(_objectTray);` which wake all the sleeping threads who waits for _objectTray
+
+```csharp
+public class LockExample
+{
+    private Queue<string> _objectTray = new Queue<string>();
+
+    public void ComputeDequeing()
+    {
+        Console.WriteLine("Thread number started {0}",Thread.CurrentThread.ManagedThreadId);
+
+        lock (_objectTray)
+        {
+            while (_objectTray.Count == 0)
+            {
+                //wait for _objectTray and sleep
+                Monitor.Wait(_objectTray);
+            }
+
+            var obj = _objectTray.Dequeue();
+            Console.WriteLine("Processing {0} ...", obj);
+        }
+    }
+
+    public void ComputeEnqueing()
+    {
+        Console.WriteLine("Thread number started {0}", Thread.CurrentThread.ManagedThreadId);
+
+        lock (_objectTray)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                _objectTray.Enqueue(string.Format("Item {0} from thread {1}",i, Thread.CurrentThread.ManagedThreadId));
+            }
+            // wake all the the threads that wait for _objectTray
+            Monitor.PulseAll(_objectTray);
+        }
+    }
+
+}
+```
+
+The main thread would look something like that
+
+```csharp
+var lockExample = new LockExample();
+
+// Enqueing
+for (int i = 0; i < 10; i++)
+{            
+    Thread thread = new Thread(lockExample.ComputeEnqueing);
+    thread.Start();
+}
+
+//Dequeing
+for (int i = 0; i < 10; i++)
+{
+    Thread thread = new Thread(lockExample.ComputeDequeing);
+    thread.Start();
+}
+```
+

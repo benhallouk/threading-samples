@@ -15,7 +15,10 @@ namespace ThreadingSamples
             // Uncomment to see the behavior of background thread
             //ThreadLifeTimeExampleRunner.Run();
 
-            ThreadShutdownCordinationExampleRunner.Run();
+            // Uncomment to see how a shutdown cordination would work 
+            //ThreadShutdownCordinationExampleRunner.Run();
+
+            LockExampleRunner.Run();
 
             Console.WriteLine("Main ends");
         }
