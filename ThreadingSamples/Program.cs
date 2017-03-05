@@ -24,7 +24,10 @@ namespace ThreadingSamples
             // uncomment to see how deadlock happen
             //DeadLockExampleRunner.Run();
 
-            DeadLockSolutionRunner.Run();
+            // uncomment to see deadlock solution using lock order policy
+            //DeadLockSolutionRunner.Run();
+
+            DeadLockSolutionUsingMutexRunner.Run();
 
             Console.WriteLine("Main ends");
         }

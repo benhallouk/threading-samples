@@ -421,3 +421,70 @@ public void Compute(DeadLockSolution deadLockSolution)
     }
 }
 ```
+
+### Deadlock solution using mutex
+
+You can use the windows kernel wrapper arround mutex to prevent dead locking by letting the windows handel the lock for you by using `mutex.WaitOne()` and releasing the mutex using `mutex.ReleaseMutex()`, the code implementation would then look like below
+
+```csharp
+public class DeadLockSolutionUsingMutex
+{
+    private int _number;
+    Mutex mutex = new Mutex();
+
+    public DeadLockSolutionUsingMutex(int number)
+    {
+        _number = number;
+    }
+
+
+    public int GetNumber()
+    {
+        return _number;
+    }
+
+    public void Compute(DeadLockSolutionUsingMutex deadLockSolution)
+    {
+        if (mutex.WaitOne())
+        {
+            try
+            {
+                Thread.Sleep(1);
+                Console.WriteLine("Thread number started {0}", Thread.CurrentThread.ManagedThreadId);
+                _number = deadLockSolution.GetNumber();
+            }
+            finally
+            {
+                mutex.ReleaseMutex();
+            }
+        }            
+    }
+
+}
+```
+
+**Note** that when using Mutex object it is important to use try finally to release the Mutex object, `WaitOne()` method and `ReleaseMutex()` accept also a timeout as an argument
+
+One of the advantages of using mutex is the multiple locks feature that it provides, to do that you can use something like this
+
+```csharp
+// create an array using the mutex objects subject to lock
+Mutex[] locks = {mutex1, mutex2}
+
+// using WaitHandel.WaitAll to use all the locks provided as argument
+if(WaitHandel.WaitAll(locks))
+{
+    try
+    {
+        //do something
+    }
+    finally
+    {
+        //no implementation provide such as ReleaseAll
+        foreach(var mutex in locks)
+        {
+            mutex.ReleaseMutex();
+        }
+    }    
+}
+```

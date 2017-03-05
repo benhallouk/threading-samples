@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeadLockSolutionUsingMutex\DeadLockSolutionUsingMutex.cs" />
+    <Compile Include="DeadLockSolutionUsingMutex\DeadLockSolutionUsingMutexRunner.cs" />
     <Compile Include="DeadLockSolution\DeadLockSolution.cs" />
     <Compile Include="DeadLockSolution\DeadLockSolutionRunner.cs" />
     <Compile Include="DeadLockExample\DeadLockExample.cs" />
