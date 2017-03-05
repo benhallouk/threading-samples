@@ -6,7 +6,19 @@ This guide should make you familiar with the fundamentals of multi-threading and
 
 ## Geting started
 
-The code samples is structored in a way to assit you learning, each section in this guide has a name space in the code so that you can jump easily between patterns and implementation of multi threading
+The code samples is structored in a way to assit you learning, each section in this guide has a name space in the code so that you can jump easily between patterns and implementation of multi threading use the navigation below to jump between sections
+
+- [Process vs Thread](#process-vs-thread)
+- [Threading use case](#threading-use-case)
+- [Threading caveats](#threading-caveats)
+- [Thread example](#thread-example)
+- [Thread life time exampled](#thread-life-time-example)
+- [Thread shutdown cordination example](#thread-shutdown-cordination-example)
+- [Lock example](#lock-example)
+- [Deadlock solution](#deadlock-solution)
+- [Deadlock solution using mutex](#deadlock-solution-using-mutex)
+
+---
 
 ### Process vs Thread 
 
